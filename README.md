@@ -2,6 +2,10 @@
 
 An intelligent code review system that analyzes your commits before creating pull requests. Uses AI to provide detailed feedback on code quality, security, performance, and best practices.
 
+## Status
+
+> 🚧 **WORK IN PROGRESS**: This repository is currently being converted from JavaScript to Python. Some features may not be fully functional during the transition process. The original JavaScript version is available at [ai-code-reviewer](https://github.com/PierrunoYT/ai-code-reviewer).
+
 ## Features
 
 - 🤖 **Latest AI Models**: Uses GPT-4.1, Claude 4 Sonnet, Claude 3.7 Sonnet, and Gemini 2.5 Pro/Flash for intelligent code analysis
