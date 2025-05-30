@@ -177,22 +177,24 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
       top_p: 0.99 // Updated default as per latest Anthropic recommendations
     };
 
-    // Add web search tool if enabled
+    // Add extended thinking if enabled (Claude 4 models)
+    if (this.enableExtendedThinking) {
+      const maxTokens = this.config.maxTokens || 4000;
+      // Budget must be less than max_tokens, so we use 75% of max_tokens or 2000, whichever is smaller
+      const budgetTokens = Math.min(2000, Math.floor(maxTokens * 0.75));
+      requestBody.thinking = {
+        type: "enabled",
+        budget_tokens: budgetTokens
+      };
+    }
+
+    // Add web search tool if enabled (Claude 4 models support this)
     if (this.enableWebSearch) {
       requestBody.tools = [
         {
+          type: "web_search_20250305",
           name: "web_search",
-          description: "Search the web for current best practices, security vulnerabilities, or documentation",
-          input_schema: {
-            type: "object",
-            properties: {
-              query: {
-                type: "string",
-                description: "The search query"
-              }
-            },
-            required: ["query"]
-          }
+          max_uses: 5
         }
       ];
     }
@@ -203,22 +205,21 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
       'Content-Type': 'application/json'
     };
 
-    // Add beta headers for new features
-    if (this.enableExtendedThinking) {
-      headers['anthropic-beta'] = 'extended-thinking-2025-01-24';
-    }
-
-    if (this.enableCitations) {
-      headers['anthropic-beta'] = headers['anthropic-beta']
-        ? `${headers['anthropic-beta']},citations-2025-01-23`
-        : 'citations-2025-01-23';
-    }
-
     const response = await axios.post(
       'https://api.anthropic.com/v1/messages',
       requestBody,
       { headers }
     );
+
+    // Handle response - extract text content from various block types
+    if (response.data.content && Array.isArray(response.data.content)) {
+      // Combine all text blocks, skipping thinking, tool use, and tool result blocks
+      const textBlocks = response.data.content
+        .filter(block => block.type === 'text')
+        .map(block => block.text);
+
+      return textBlocks.join(' ');
+    }
 
     return response.data.content[0].text;
   }
