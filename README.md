@@ -23,9 +23,20 @@ An intelligent code review system that analyzes your commits before creating pul
    npm install
    ```
 
-2. **Set up your AI API key:**
+2. **Set up your environment variables:**
    ```bash
-   export AI_API_KEY="your-openai-or-anthropic-api-key"
+   # Copy the example environment file
+   cp .env.example .env
+
+   # Edit .env and add your API keys
+   # For Anthropic/Claude (recommended):
+   export ANTHROPIC_API_KEY="your-anthropic-api-key"
+
+   # For OpenAI:
+   export OPENAI_API_KEY="your-openai-api-key"
+
+   # For Google/Gemini:
+   export GOOGLE_API_KEY="your-google-api-key"
    ```
 
 3. **Install git hooks (optional but recommended):**
@@ -171,7 +182,7 @@ Create a `.ai-reviewer-config.json` file to customize settings:
 
 ### Anthropic Claude (Recommended)
 ```bash
-export AI_API_KEY="sk-ant-..."  # Your Anthropic API key
+export ANTHROPIC_API_KEY="sk-ant-..."  # Your Anthropic API key
 ```
 
 **Latest Models:**
@@ -188,7 +199,7 @@ export AI_API_KEY="sk-ant-..."  # Your Anthropic API key
 
 ### OpenAI
 ```bash
-export AI_API_KEY="sk-..."  # Your OpenAI API key
+export OPENAI_API_KEY="sk-..."  # Your OpenAI API key
 ```
 
 **Latest Models:**
@@ -203,7 +214,7 @@ export AI_API_KEY="sk-..."  # Your OpenAI API key
 
 ### Google AI (Gemini)
 ```bash
-export AI_API_KEY="your-google-ai-api-key"  # Your Google AI API key
+export GOOGLE_API_KEY="your-google-ai-api-key"  # Your Google AI API key
 ```
 
 **Latest Models:**
@@ -280,11 +291,19 @@ Example enhanced output:
 **Project Structure:**
 ```
 src/
-├── index.js              # Main application
-├── ai-reviewer.js        # AI integration
-├── git-analyzer.js       # Git operations
+├── index.js              # Main application entry point
+├── ai-reviewer.js        # AI integration and API calls
+├── git-analyzer.js       # Git operations and diff analysis
 ├── cli.js               # Command line interface
+├── config-loader.js      # Configuration management
+├── demo.js              # Demo script showcasing features
 └── git-hook-installer.js # Git hooks management
+
+Configuration Files:
+├── .ai-reviewer-config.json  # Main configuration file
+├── .env.example             # Environment variables template
+├── package.json             # Node.js dependencies and scripts
+└── .gitignore              # Git ignore patterns
 ```
 
 **Scripts:**
@@ -292,23 +311,37 @@ src/
 npm start          # Run the reviewer
 npm run review     # Review commits
 npm run install-hook # Install git hooks
-npm test          # Run tests
+npm test          # Run tests with sample code
+npm run demo      # Run demo showcasing enhanced features
+npm run config    # Generate enhanced configuration file
 ```
 
 ## Environment Variables
 
-- `AI_API_KEY` - Your AI provider API key (required)
-- `AI_PROVIDER` - AI provider ('openai', 'anthropic', or 'google')
-- `AI_MODEL` - AI model to use
-- `DEBUG` - Enable debug logging
+### Required API Keys (choose one or more providers)
+- `ANTHROPIC_API_KEY` - Your Anthropic/Claude API key
+- `OPENAI_API_KEY` - Your OpenAI API key
+- `GOOGLE_API_KEY` - Your Google/Gemini API key
+- `AI_API_KEY` - Legacy fallback API key (for backward compatibility)
+
+### Optional Configuration
+- `AI_PROVIDER` - AI provider ('anthropic', 'openai', or 'google') - defaults to 'anthropic'
+- `AI_MODEL` - AI model to use - defaults to provider-specific latest model
+- `DEBUG` - Enable debug logging (true/false) - defaults to false
+- `AI_REVIEWER_CONFIG_PATH` - Custom config file path - defaults to '.ai-reviewer-config.json'
+- `JWT_SECRET` - JWT secret for demo authentication scenarios
 
 ## Troubleshooting
 
 **Common Issues:**
 
 1. **"AI API key not found"**
-   - Set the `AI_API_KEY` environment variable
+   - Set the appropriate API key environment variable:
+     - `ANTHROPIC_API_KEY` for Claude models
+     - `OPENAI_API_KEY` for GPT models
+     - `GOOGLE_API_KEY` for Gemini models
    - Or specify `--api-key` in CLI command
+   - Or set the legacy `AI_API_KEY` variable
 
 2. **Git hooks not working**
    - Ensure you're in a git repository
@@ -324,6 +357,14 @@ npm test          # Run tests
    - Customize `reviewCriteria` in configuration
    - Adjust `minimumScore` threshold
    - Use `--no-verify` to bypass when needed
+
+## Security Considerations
+
+- **API Keys**: Never commit your `.env` file or expose API keys in code
+- **Environment Variables**: Use `.env.example` as a template and create your own `.env` file
+- **Git Hooks**: The pre-commit and pre-push hooks help catch security issues before they're committed
+- **Configuration**: Review the `.ai-reviewer-config.json` file to ensure it meets your security requirements
+- **Backup**: Git hooks create backup files (`.backup` extension) when installing over existing hooks
 
 ## License
 

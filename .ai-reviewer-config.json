@@ -1,6 +1,6 @@
 {
   "aiProvider": "anthropic",
-  "model": "claude-4-sonnet",
+  "model": "claude-sonnet-4-20250514",
   "maxTokens": 4000,
   "enableWebSearch": true,
   "enableExtendedThinking": true,
@@ -30,7 +30,7 @@
     },
     "claude4opus": {
       "aiProvider": "anthropic",
-      "model": "claude-4-opus",
+      "model": "claude-opus-4-20250514",
       "maxTokens": 8000,
       "enableExtendedThinking": true,
       "enableCitations": true
