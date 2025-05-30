@@ -39,7 +39,7 @@ const configs = {
     aiProvider: 'anthropic',
     model: 'claude-sonnet-4-20250514',
     apiKey: process.env.ANTHROPIC_API_KEY,
-    maxTokens: 4000,
+    maxTokens: 64000,
     enableWebSearch: true,
     enableExtendedThinking: true,
     enableCitations: true
@@ -48,7 +48,7 @@ const configs = {
     aiProvider: 'anthropic',
     model: 'claude-opus-4-20250514',
     apiKey: process.env.ANTHROPIC_API_KEY,
-    maxTokens: 8000,
+    maxTokens: 32000,
     enableExtendedThinking: true,
     enableCitations: true
   },
@@ -56,7 +56,7 @@ const configs = {
     aiProvider: 'anthropic',
     model: 'claude-3-7-sonnet-20250219',
     apiKey: process.env.ANTHROPIC_API_KEY,
-    maxTokens: 4000,
+    maxTokens: 128000,
     enableWebSearch: true,
     enableCitations: true,
     enableExtendedThinking: true
@@ -65,14 +65,14 @@ const configs = {
     aiProvider: 'openai',
     model: 'gpt-4.1',
     apiKey: process.env.OPENAI_API_KEY,
-    maxTokens: 4000,
+    maxTokens: 32768,
     enableWebSearch: false // OpenAI doesn't support the same web search tool
   },
   'Gemini 2.5 Pro': {
     aiProvider: 'google',
     model: 'gemini-2.5-pro-preview-05-06',
     apiKey: process.env.GOOGLE_API_KEY,
-    maxTokens: 4000,
+    maxTokens: 64000,
     enableWebSearch: false, // Google might not support web search in the same way
     enableExtendedThinking: true
   },
@@ -80,7 +80,7 @@ const configs = {
     aiProvider: 'google',
     model: 'gemini-2.5-flash-preview-05-20',
     apiKey: process.env.GOOGLE_API_KEY,
-    maxTokens: 4000,
+    maxTokens: 64000,
     enableWebSearch: false,
     enableExtendedThinking: true
   }

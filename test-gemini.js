@@ -39,7 +39,7 @@ const geminiConfigs = {
     aiProvider: 'google',
     model: 'gemini-2.5-pro-preview-05-06',
     apiKey: process.env.GOOGLE_API_KEY,
-    maxTokens: 4000,
+    maxTokens: 64000,
     enableWebSearch: false, // Test without web search first
     enableExtendedThinking: true
   },
@@ -47,7 +47,7 @@ const geminiConfigs = {
     aiProvider: 'google',
     model: 'gemini-2.5-flash-preview-05-20',
     apiKey: process.env.GOOGLE_API_KEY,
-    maxTokens: 4000,
+    maxTokens: 64000,
     enableWebSearch: false, // Test without web search first
     enableExtendedThinking: true
   }

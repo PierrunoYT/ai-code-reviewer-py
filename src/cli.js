@@ -77,7 +77,7 @@ program
     const baseConfig = {
       aiProvider: 'anthropic',
       model: 'claude-sonnet-4-20250514',
-      maxTokens: 4000,
+      maxTokens: 64000,
       reviewCriteria: [
         'code quality',
         'security vulnerabilities',
@@ -108,20 +108,20 @@ program
         openai: {
           aiProvider: 'openai',
           model: 'gpt-4.1',
-          maxTokens: 4000,
+          maxTokens: 32768,
           enableWebSearch: true
         },
         claude4opus: {
           aiProvider: 'anthropic',
           model: 'claude-opus-4-20250514',
-          maxTokens: 8000,
+          maxTokens: 32000,
           enableExtendedThinking: true,
           enableCitations: true
         },
         claude37sonnet: {
           aiProvider: 'anthropic',
           model: 'claude-3-7-sonnet-20250219',
-          maxTokens: 4000,
+          maxTokens: 128000,
           enableWebSearch: true,
           enableCitations: true,
           enableExtendedThinking: true
@@ -129,7 +129,7 @@ program
         gemini25pro: {
           aiProvider: 'google',
           model: 'gemini-2.5-pro-preview-05-06',
-          maxTokens: 4000,
+          maxTokens: 64000,
           enableWebSearch: true,
           enableCitations: true,
           enableExtendedThinking: true
@@ -137,7 +137,7 @@ program
         gemini25flash: {
           aiProvider: 'google',
           model: 'gemini-2.5-flash-preview-05-20',
-          maxTokens: 4000,
+          maxTokens: 64000,
           enableWebSearch: true,
           enableCitations: true,
           enableExtendedThinking: true

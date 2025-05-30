@@ -30,7 +30,7 @@ const config = {
   aiProvider: 'google',
   model: 'gemini-2.5-pro-preview-05-06',
   apiKey: process.env.GOOGLE_API_KEY,
-  maxTokens: 8000, // Increased to see if it's a token limit issue
+  maxTokens: 64000, // Using optimal token limit for Gemini 2.5 Pro
   enableWebSearch: false,
   enableExtendedThinking: true
 };

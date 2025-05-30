@@ -67,7 +67,7 @@ export function loadConfiguration(options = {}) {
   const defaults = {
     aiProvider: 'anthropic',
     model: 'claude-sonnet-4-20250514',
-    maxTokens: 4000,
+    maxTokens: 64000,
     enableWebSearch: false,
     enableExtendedThinking: false,
     enableCitations: false,

@@ -122,7 +122,7 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
           content: prompt
         }
       ],
-      max_tokens: this.config.maxTokens || 4000,
+      max_tokens: this.config.maxTokens || 32768,
       temperature: 0.1,
       top_p: 0.99 // Updated default as per latest OpenAI recommendations
     };
@@ -167,7 +167,7 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
   async callAnthropic(prompt) {
     const requestBody = {
       model: this.model,
-      max_tokens: this.config.maxTokens || 4000,
+      max_tokens: this.config.maxTokens || 64000,
       messages: [
         {
           role: 'user',
@@ -179,9 +179,9 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
 
     // Add extended thinking if enabled (Claude 4 models)
     if (this.enableExtendedThinking) {
-      const maxTokens = this.config.maxTokens || 4000;
-      // Budget must be less than max_tokens, so we use 75% of max_tokens or 2000, whichever is smaller
-      const budgetTokens = Math.min(2000, Math.floor(maxTokens * 0.75));
+      const maxTokens = this.config.maxTokens || 64000;
+      // Budget must be less than max_tokens, so we use 75% of max_tokens or 48000, whichever is smaller
+      const budgetTokens = Math.min(48000, Math.floor(maxTokens * 0.75));
       requestBody.thinking = {
         type: "enabled",
         budget_tokens: budgetTokens
@@ -236,7 +236,7 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
         }
       ],
       generationConfig: {
-        maxOutputTokens: this.config.maxTokens || 4000,
+        maxOutputTokens: this.config.maxTokens || 64000,
         temperature: 0.1,
         topP: 0.99
       }
@@ -250,8 +250,8 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
 
       // Add thinking budget for Flash models
       if (this.model.includes('flash')) {
-        const maxTokens = this.config.maxTokens || 4000;
-        const budgetTokens = Math.min(2000, Math.floor(maxTokens * 0.75));
+        const maxTokens = this.config.maxTokens || 64000;
+        const budgetTokens = Math.min(48000, Math.floor(maxTokens * 0.75));
         requestBody.generationConfig.thinkingConfig.thinkingBudget = budgetTokens;
       }
     }
@@ -348,7 +348,7 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
       url: '/v1/messages',
       body: {
         model: this.model,
-        max_tokens: this.config.maxTokens || 4000,
+        max_tokens: this.config.maxTokens || 64000,
         messages: [
           {
             role: 'user',

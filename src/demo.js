@@ -11,7 +11,7 @@ async function runDemo() {
   const enhancedConfig = {
     aiProvider: 'anthropic',
     model: 'claude-sonnet-4-20250514',
-    maxTokens: 4000,
+    maxTokens: 64000,
     enableWebSearch: true,
     enableExtendedThinking: true,
     enableCitations: true,
@@ -121,7 +121,7 @@ function showFeatureComparison() {
     ['Citations', 'Not available', 'Source attribution included'],
     ['Retry Logic', 'Basic error handling', 'Exponential backoff retry'],
     ['Review Criteria', '7 categories', '9 categories + accessibility'],
-    ['Token Limit', '2000 tokens', '4000-8000 tokens'],
+    ['Token Limit', '2000 tokens', '32K-128K tokens'],
     ['Configuration', 'Static config', 'Multiple provider configs (Anthropic, OpenAI, Google)']
   ];
 
