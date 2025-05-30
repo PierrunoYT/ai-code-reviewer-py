@@ -239,6 +239,180 @@ export GOOGLE_API_KEY="your-google-ai-api-key"  # Your Google AI API key
 - Long context windows (up to 1M tokens)
 - Native tool use and function calling
 
+## 📊 How Code Analysis Works
+
+The AI reviewer performs comprehensive code analysis through a sophisticated multi-stage process:
+
+### 1. **Git Data Extraction**
+```javascript
+// Extracts detailed commit information
+- Commit hash, author, date, message, and body
+- Full unified diff with 3 lines of context around changes
+- Complete list of changed files
+- File modification types (added, modified, deleted)
+```
+
+### 2. **Diff Analysis Structure**
+The system uses `git show --unified=3` to capture:
+- **Full diff content**: Including additions (+), deletions (-), and context lines
+- **File paths**: What files were modified, added, or deleted
+- **Line numbers**: Exact locations of changes
+- **Change context**: Surrounding code for better understanding
+
+### 3. **AI Prompt Construction**
+Each commit receives a structured analysis prompt containing:
+
+```
+You are an expert code reviewer. Review this git commit:
+
+Commit Message: [message]
+Author: [author]  
+Date: [date]
+
+Code Changes:
+```diff
+[complete unified diff]
+```
+
+Analyze focusing on 8 key dimensions:
+1. Code quality and maintainability
+2. Security vulnerabilities (OWASP guidelines)
+3. Performance implications  
+4. Best practices adherence (current industry standards)
+5. Testing considerations
+6. Documentation needs
+7. Accessibility considerations
+8. Dependency security
+```
+
+### 4. **Enhanced Analysis Features**
+
+**🌐 Web Search Integration** (optional):
+- Real-time lookup of security vulnerabilities in dependencies
+- Current best practices verification from authoritative sources
+- Framework-specific recommendations and updates
+- OWASP, NIST, and other security guideline references
+
+**🧠 Extended Thinking** (Claude models):
+- Step-by-step reasoning process visible to users
+- Deeper analysis with logical thought progression
+- Budget-controlled thinking tokens for thorough review
+
+**📚 Citations & Sources**:
+- Source attribution for all recommendations
+- Links to security guidelines (OWASP, NIST, CWE)
+- Best practice documentation references
+- Framework and library documentation
+
+### 5. **Multi-Dimensional Analysis Framework**
+
+The AI analyzes **8 critical dimensions** simultaneously:
+
+| Dimension | Analysis Focus | Examples |
+|-----------|---------------|----------|
+| **🔒 Security** | Vulnerabilities & threats | SQL injection, XSS, secrets in code, input validation |
+| **⚡ Performance** | Efficiency & optimization | Inefficient algorithms, memory leaks, database queries |
+| **🏗️ Quality** | Code structure & maintainability | Complexity, readability, design patterns, SOLID principles |
+| **🎨 Style** | Conventions & consistency | Naming conventions, formatting, code organization |
+| **🧪 Testing** | Test coverage & quality | Missing tests, test effectiveness, mocking strategies |
+| **📚 Documentation** | Code clarity & docs | Comments, README updates, API documentation |
+| **♿ Accessibility** | Inclusive design | ARIA labels, keyboard navigation, screen reader support |
+| **📦 Dependencies** | Package security & updates | Vulnerable packages, outdated versions, license issues |
+
+### 6. **Context-Aware Intelligence**
+
+The AI understands and adapts to:
+
+**Language-Specific Patterns:**
+- JavaScript/TypeScript: Async/await, promises, ES6+ features
+- Python: Pythonic idioms, PEP standards, virtual environments
+- Java: Spring patterns, Maven/Gradle, enterprise patterns
+- And 50+ other programming languages
+
+**Framework Recognition:**
+- **Web**: React, Vue, Angular, Express, Django, Flask
+- **Mobile**: React Native, Flutter, Swift, Kotlin
+- **Cloud**: AWS, Azure, GCP services and patterns
+- **Databases**: SQL patterns, NoSQL usage, ORM practices
+
+**Security Context Analysis:**
+- Web application security (OWASP Top 10)
+- API security best practices
+- Database security patterns
+- Authentication and authorization flows
+
+### 7. **Structured Analysis Output**
+
+Returns comprehensive JSON structure:
+```json
+{
+  "score": 7,                    // 1-10 quality rating
+  "confidence": 9,               // AI confidence level
+  "summary": "Added authentication with security concerns",
+  "issues": [
+    {
+      "severity": "critical",    // critical|high|medium|low
+      "description": "SQL injection vulnerability",
+      "suggestion": "Use parameterized queries",
+      "category": "security",    // security|performance|quality|style|testing|documentation
+      "citation": "OWASP SQL Injection Prevention",
+      "autoFixable": true
+    }
+  ],
+  "suggestions": ["Add input validation", "Implement rate limiting"],
+  "security": ["Use HTTPS", "Hash passwords with bcrypt"],
+  "performance": ["Add database indexing", "Implement caching"],
+  "dependencies": ["Update vulnerable packages"],
+  "accessibility": ["Add ARIA labels", "Improve keyboard navigation"],
+  "sources": ["OWASP Top 10", "Node.js Security Checklist"]
+}
+```
+
+### 8. **Real-World Analysis Examples**
+
+**Example 1: Authentication Code**
+```javascript
+// Input: User login function with SQL concatenation
+function login(username, password) {
+  const query = "SELECT * FROM users WHERE username = '" + username + "'";
+  return database.query(query);
+}
+
+// AI Analysis Output:
+// 🚨 CRITICAL: SQL injection vulnerability
+// 💡 Suggestion: Use parameterized queries
+// 📚 Source: OWASP SQL Injection Prevention Guide
+// 🔧 Auto-fixable: Yes
+```
+
+**Example 2: React Component**
+```jsx
+// Input: Component without accessibility
+<button onClick={handleClick}>Submit</button>
+
+// AI Analysis Output:
+// ⚠️ MEDIUM: Missing accessibility attributes
+// 💡 Suggestion: Add aria-label and keyboard support
+// 📚 Source: WAI-ARIA Authoring Practices
+// ♿ Accessibility: Consider screen reader users
+```
+
+### 9. **Intelligent Scoring System**
+
+**Quality Score (1-10):**
+- **8-10**: Excellent code with minor suggestions
+- **6-7**: Good code with some improvements needed
+- **4-5**: Acceptable but requires attention
+- **1-3**: Significant issues requiring immediate fixes
+
+**Confidence Level (1-10):**
+- **8-10**: High confidence in analysis accuracy
+- **6-7**: Good confidence with some uncertainty
+- **4-5**: Moderate confidence, manual review suggested
+- **1-3**: Low confidence, human expert review required
+
+The analysis is **comprehensive, context-aware, and actionable** - providing expert-level code review insights with the latest security knowledge and best practices, far beyond simple syntax checking.
+
 ## Enhanced Review Output
 
 The AI reviewer provides comprehensive analysis:
