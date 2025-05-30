@@ -67,3 +67,4 @@ Thumbs.db
 # AI Reviewer specific
 .ai-reviewer-enhanced.json
 .ai-reviewer.json
+code-reviews/

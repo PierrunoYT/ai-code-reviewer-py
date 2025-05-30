@@ -44,6 +44,11 @@ export function loadConfiguration(options = {}) {
   if (options.citations) config.enableCitations = true;
   if (options.batch) config.enableBatchProcessing = true;
   if (options.noBatch) config.enableBatchProcessing = false;
+  if (options.saveMarkdown) config.saveToMarkdown = true;
+  if (options.noSaveMarkdown) config.saveToMarkdown = false;
+  if (options.markdownDir) config.markdownOutputDir = options.markdownDir;
+  if (options.includeDiff) config.includeDiffInMarkdown = true;
+  if (options.noIncludeDiff) config.includeDiffInMarkdown = false;
   
   // 3. Set provider-specific API key if not already set
   if (!config.apiKey) {
@@ -74,6 +79,9 @@ export function loadConfiguration(options = {}) {
     enableBatchProcessing: true,
     retryAttempts: 3,
     batchSize: 5,
+    saveToMarkdown: true,
+    markdownOutputDir: './code-reviews',
+    includeDiffInMarkdown: true,
     reviewCriteria: [
       'code quality',
       'security vulnerabilities',

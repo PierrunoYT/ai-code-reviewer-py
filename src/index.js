@@ -5,6 +5,8 @@ import { AIReviewer } from './ai-reviewer.js';
 import { GitAnalyzer } from './git-analyzer.js';
 import { loadConfiguration, validateConfiguration } from './config-loader.js';
 import chalk from 'chalk';
+import fs from 'fs';
+import path from 'path';
 
 // Load environment variables
 dotenv.config();
@@ -56,6 +58,11 @@ export class ReviewerApp {
       const review = await this.aiReviewer.reviewCodeWithRetry(diff, commit, this.config.retryAttempts);
 
       this.displayReview(review, commit);
+      
+      // Save review to markdown file if enabled
+      if (this.config.saveToMarkdown !== false) {
+        await this.saveReviewToMarkdown(review, commit, diff);
+      }
     }
   }
 
@@ -81,6 +88,11 @@ export class ReviewerApp {
       for (let j = 0; j < batch.length; j++) {
         console.log(chalk.cyan(`\n📝 Commit: ${batch[j].hash.substring(0, 8)} - ${batch[j].message}`));
         this.displayReview(reviews[j], batch[j]);
+        
+        // Save review to markdown file if enabled
+        if (this.config.saveToMarkdown !== false) {
+          await this.saveReviewToMarkdown(reviews[j], batch[j], diffs[j]);
+        }
       }
     }
   }
@@ -172,6 +184,165 @@ export class ReviewerApp {
     }
 
     console.log(chalk.gray('─'.repeat(80)));
+  }
+
+  async saveReviewToMarkdown(review, commit, diff) {
+    try {
+      const markdownContent = this.generateMarkdownContent(review, commit, diff);
+      const filename = this.generateMarkdownFilename(commit);
+      const outputDir = this.config.markdownOutputDir || './code-reviews';
+      
+      // Create output directory if it doesn't exist
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
+      
+      const filepath = path.join(outputDir, filename);
+      fs.writeFileSync(filepath, markdownContent, 'utf8');
+      
+      console.log(chalk.green(`💾 Review saved to: ${filepath}`));
+    } catch (error) {
+      console.error(chalk.red('❌ Failed to save markdown file:'), error.message);
+    }
+  }
+
+  generateMarkdownFilename(commit) {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    const shortHash = commit.hash.substring(0, 8);
+    const sanitizedMessage = commit.message
+      .replace(/[^a-zA-Z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .toLowerCase()
+      .substring(0, 50);
+    
+    return `${timestamp}-${shortHash}-${sanitizedMessage}.md`;
+  }
+
+  generateMarkdownContent(review, commit, diff) {
+    const timestamp = new Date().toISOString();
+    
+    let markdown = `# Code Review Report\n\n`;
+    markdown += `**Generated:** ${timestamp}\n`;
+    markdown += `**Commit:** ${commit.hash}\n`;
+    markdown += `**Author:** ${commit.author}\n`;
+    markdown += `**Date:** ${commit.date}\n`;
+    markdown += `**Message:** ${commit.message}\n\n`;
+    
+    markdown += `---\n\n`;
+    
+    // Scores
+    if (review.score !== undefined || review.confidence !== undefined) {
+      markdown += `## 📊 Review Scores\n\n`;
+      if (review.score !== undefined) {
+        const scoreEmoji = review.score >= 8 ? '🟢' : review.score >= 6 ? '🟡' : '🔴';
+        markdown += `- **Code Quality Score:** ${scoreEmoji} ${review.score}/10\n`;
+      }
+      if (review.confidence !== undefined) {
+        const confidenceEmoji = review.confidence >= 8 ? '🟢' : review.confidence >= 6 ? '🟡' : '🔴';
+        markdown += `- **AI Confidence Level:** ${confidenceEmoji} ${review.confidence}/10\n`;
+      }
+      markdown += `\n`;
+    }
+    
+    // Summary
+    if (review.summary) {
+      markdown += `## 📋 Summary\n\n${review.summary}\n\n`;
+    }
+    
+    // Issues
+    if (review.issues && review.issues.length > 0) {
+      markdown += `## ⚠️ Issues Found\n\n`;
+      review.issues.forEach((issue, i) => {
+        const severityEmoji = {
+          'critical': '🚨',
+          'high': '⚠️',
+          'medium': '⚡',
+          'low': 'ℹ️'
+        }[issue.severity] || '⚠️';
+        
+        markdown += `### ${i + 1}. ${severityEmoji} ${issue.severity.toUpperCase()}: ${issue.description}\n\n`;
+        
+        if (issue.suggestion) {
+          markdown += `**💡 Suggestion:** ${issue.suggestion}\n\n`;
+        }
+        if (issue.category) {
+          markdown += `**🏷️ Category:** ${issue.category}\n\n`;
+        }
+        if (issue.citation) {
+          markdown += `**📚 Source:** ${issue.citation}\n\n`;
+        }
+        if (issue.autoFixable) {
+          markdown += `**🔧 Auto-fixable:** Yes\n\n`;
+        }
+        markdown += `---\n\n`;
+      });
+    }
+    
+    // Suggestions
+    if (review.suggestions && review.suggestions.length > 0) {
+      markdown += `## 💡 General Suggestions\n\n`;
+      review.suggestions.forEach((suggestion, i) => {
+        markdown += `${i + 1}. ${suggestion}\n`;
+      });
+      markdown += `\n`;
+    }
+    
+    // Security Notes
+    if (review.security && review.security.length > 0) {
+      markdown += `## 🔒 Security Notes\n\n`;
+      review.security.forEach((note, i) => {
+        markdown += `${i + 1}. ${note}\n`;
+      });
+      markdown += `\n`;
+    }
+    
+    // Performance Notes
+    if (review.performance && review.performance.length > 0) {
+      markdown += `## ⚡ Performance Notes\n\n`;
+      review.performance.forEach((note, i) => {
+        markdown += `${i + 1}. ${note}\n`;
+      });
+      markdown += `\n`;
+    }
+    
+    // Dependency Notes
+    if (review.dependencies && review.dependencies.length > 0) {
+      markdown += `## 📦 Dependency Notes\n\n`;
+      review.dependencies.forEach((note, i) => {
+        markdown += `${i + 1}. ${note}\n`;
+      });
+      markdown += `\n`;
+    }
+    
+    // Accessibility Notes
+    if (review.accessibility && review.accessibility.length > 0) {
+      markdown += `## ♿ Accessibility Notes\n\n`;
+      review.accessibility.forEach((note, i) => {
+        markdown += `${i + 1}. ${note}\n`;
+      });
+      markdown += `\n`;
+    }
+    
+    // Sources Consulted
+    if (review.sources && review.sources.length > 0) {
+      markdown += `## 📚 Sources Consulted\n\n`;
+      review.sources.forEach((source, i) => {
+        markdown += `${i + 1}. ${source}\n`;
+      });
+      markdown += `\n`;
+    }
+    
+    // Code Diff
+    if (diff && this.config.includeDiffInMarkdown !== false) {
+      markdown += `## 📝 Code Changes\n\n`;
+      markdown += `\`\`\`diff\n${diff}\n\`\`\`\n\n`;
+    }
+    
+    // Footer
+    markdown += `---\n\n`;
+    markdown += `*Generated by AI PR Reviewer using ${this.config.aiProvider} (${this.config.model})*\n`;
+    
+    return markdown;
   }
 
   async shouldAllowCommit(review) {

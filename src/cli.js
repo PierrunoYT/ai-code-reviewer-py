@@ -28,6 +28,11 @@ program
   .option('--citations', 'Enable citations for recommendations')
   .option('--batch', 'Enable batch processing for multiple commits')
   .option('--no-batch', 'Disable batch processing')
+  .option('--save-markdown', 'Save reviews to markdown files')
+  .option('--no-save-markdown', 'Disable saving to markdown files')
+  .option('--markdown-dir <dir>', 'Directory to save markdown files')
+  .option('--include-diff', 'Include code diff in markdown files')
+  .option('--no-include-diff', 'Exclude code diff from markdown files')
   .action(async (range, options) => {
     try {
       const config = loadConfig(options);
@@ -88,7 +93,10 @@ program
         'documentation'
       ],
       blockingIssues: ['critical', 'high'],
-      minimumScore: 6
+      minimumScore: 6,
+      saveToMarkdown: true,
+      markdownOutputDir: './code-reviews',
+      includeDiffInMarkdown: true
     };
 
     const enhancedConfig = {
@@ -99,6 +107,9 @@ program
       enableBatchProcessing: true,
       retryAttempts: 3,
       batchSize: 5,
+      saveToMarkdown: true,
+      markdownOutputDir: './code-reviews',
+      includeDiffInMarkdown: true,
       reviewCriteria: [
         ...baseConfig.reviewCriteria,
         'accessibility',

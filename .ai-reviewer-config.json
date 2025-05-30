@@ -21,6 +21,9 @@
   "minimumScore": 6,
   "retryAttempts": 3,
   "batchSize": 5,
+  "saveToMarkdown": true,
+  "markdownOutputDir": "./code-reviews",
+  "includeDiffInMarkdown": true,
   "alternativeConfigs": {
     "openai": {
       "aiProvider": "openai",

@@ -14,6 +14,7 @@ An intelligent code review system that analyzes your commits before creating pul
 - 🪝 **Git Integration**: Automatic git hooks for pre-commit and pre-push reviews
 - 📊 **Advanced Scoring**: Quality scores with confidence levels
 - 🎯 **Highly Customizable**: Multiple provider configs and feature toggles
+- 📄 **Markdown Reports**: Automatic saving of detailed review reports in markdown format
 - 🚀 **Easy Setup**: Simple CLI installation and configuration
 
 ## Installation
@@ -71,6 +72,12 @@ npx ai-reviewer review HEAD~5..HEAD --batch
 # Review with extended thinking (Anthropic only)
 npx ai-reviewer review --extended-thinking
 
+# Save reviews to custom markdown directory
+npx ai-reviewer review --markdown-dir ./my-reviews
+
+# Disable markdown saving
+npx ai-reviewer review --no-save-markdown
+
 # Test the reviewer
 npx ai-reviewer test
 
@@ -117,6 +124,9 @@ Create a `.ai-reviewer-config.json` file to customize settings:
   "enableBatchProcessing": true,
   "retryAttempts": 3,
   "batchSize": 5,
+  "saveToMarkdown": true,
+  "markdownOutputDir": "./code-reviews",
+  "includeDiffInMarkdown": true,
   "reviewCriteria": [
     "code quality",
     "security vulnerabilities",
@@ -179,6 +189,9 @@ Create a `.ai-reviewer-config.json` file to customize settings:
 - `enableBatchProcessing`: Process multiple commits efficiently
 - `retryAttempts`: Number of retry attempts on API failures
 - `batchSize`: Number of commits to process in each batch
+- `saveToMarkdown`: Save detailed review reports in markdown format
+- `markdownOutputDir`: Directory to save markdown review files
+- `includeDiffInMarkdown`: Include code diffs in markdown reports
 
 ## Supported AI Providers
 
@@ -240,6 +253,33 @@ The AI reviewer provides comprehensive analysis:
 - **Dependency Notes**: Package and library security
 - **Accessibility Notes**: Accessibility considerations
 - **Citations**: Source attribution for recommendations
+
+## 📄 Markdown Review Reports
+
+All reviews are automatically saved as detailed markdown files in the `./code-reviews` directory (configurable). Each report includes:
+
+- **Complete review details** with all scores, issues, and suggestions
+- **Formatted markdown** with proper headings, emojis, and structure
+- **Code diffs** (optional, enabled by default)
+- **Timestamped filenames** for easy organization
+- **Provider and model information** in footer
+
+**Example filename format:**
+```
+2025-05-30T14-30-15-abc12345-fix-authentication-bug.md
+```
+
+**Report structure:**
+- 📊 Review Scores (Quality & Confidence)
+- 📋 Summary
+- ⚠️ Issues Found (categorized by severity)
+- 💡 General Suggestions
+- 🔒 Security Notes
+- ⚡ Performance Notes
+- 📦 Dependency Notes
+- ♿ Accessibility Notes
+- 📚 Sources Consulted
+- 📝 Code Changes (diff)
 
 Example enhanced output:
 ```
