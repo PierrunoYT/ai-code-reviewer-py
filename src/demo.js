@@ -72,7 +72,7 @@ index 0000000..abc1234
 +  const user = getUserFromDatabase(username);
 +  
 +  if (user && bcrypt.compareSync(password, user.hashedPassword)) {
-+    const token = jwt.sign({ userId: user.id }, 'secret-key');
++    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'secret-key');
 +    return { success: true, token };
 +  }
 +  

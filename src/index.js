@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
+import dotenv from 'dotenv';
 import { AIReviewer } from './ai-reviewer.js';
 import { GitAnalyzer } from './git-analyzer.js';
 import chalk from 'chalk';
+
+// Load environment variables
+dotenv.config();
 
 const DEFAULT_CONFIG = {
   aiProvider: 'anthropic', // Updated to use latest Anthropic models
