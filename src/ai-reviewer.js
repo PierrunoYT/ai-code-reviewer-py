@@ -242,11 +242,18 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
       }
     };
 
-    // Add thinking configuration if enabled
+    // Add thinking configuration if enabled (Gemini 2.5 models)
     if (this.enableExtendedThinking) {
       requestBody.generationConfig.thinkingConfig = {
-        enabled: true
+        includeThoughts: true
       };
+
+      // Add thinking budget for Flash models
+      if (this.model.includes('flash')) {
+        const maxTokens = this.config.maxTokens || 4000;
+        const budgetTokens = Math.min(2000, Math.floor(maxTokens * 0.75));
+        requestBody.generationConfig.thinkingConfig.thinkingBudget = budgetTokens;
+      }
     }
 
     const response = await axios.post(
@@ -259,21 +266,46 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
       }
     );
 
+    // Handle response - extract text content, skipping thinking parts
+    if (response.data.candidates && response.data.candidates[0].content.parts) {
+      const textParts = response.data.candidates[0].content.parts
+        .filter(part => part.text && !part.thought)
+        .map(part => part.text);
+
+      return textParts.join(' ');
+    }
+
     return response.data.candidates[0].content.parts[0].text;
   }
 
   parseResponse(response) {
     try {
-      // Clean response and extract JSON
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
+      // Remove markdown code block wrappers if present
+      let cleanedResponse = response;
+
+      // Handle ```json ... ``` blocks
+      const markdownJsonMatch = cleanedResponse.match(/```json\s*([\s\S]*?)\s*```/);
+      if (markdownJsonMatch) {
+        cleanedResponse = markdownJsonMatch[1];
+      }
+
+      // Handle ``` ... ``` blocks (without language specifier)
+      const markdownMatch = cleanedResponse.match(/```\s*([\s\S]*?)\s*```/);
+      if (markdownMatch) {
+        cleanedResponse = markdownMatch[1];
+      }
+
+      // Extract JSON object from the cleaned response
+      const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
-      
-      // Fallback parsing
-      return JSON.parse(response);
+
+      // Try parsing the cleaned response directly
+      return JSON.parse(cleanedResponse.trim());
     } catch (error) {
       console.warn('Failed to parse AI response as JSON, using fallback');
+      console.warn('Response was:', response.substring(0, 200) + '...');
       return this.getFallbackReview();
     }
   }
