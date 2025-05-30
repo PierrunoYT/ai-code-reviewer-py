@@ -3,38 +3,22 @@
 import dotenv from 'dotenv';
 import { AIReviewer } from './ai-reviewer.js';
 import { GitAnalyzer } from './git-analyzer.js';
+import { loadConfiguration, validateConfiguration } from './config-loader.js';
 import chalk from 'chalk';
 
 // Load environment variables
 dotenv.config();
 
-const DEFAULT_CONFIG = {
-  aiProvider: 'anthropic', // Updated to use latest Anthropic models
-  apiKey: process.env.AI_API_KEY,
-  model: 'claude-4-sonnet',
-  maxTokens: 4000,
-  enableWebSearch: false,
-  enableExtendedThinking: false,
-  enableCitations: false,
-  enableBatchProcessing: true,
-  retryAttempts: 3,
-  batchSize: 5,
-  reviewCriteria: [
-    'code quality',
-    'security vulnerabilities',
-    'performance issues',
-    'naming conventions',
-    'code complexity',
-    'test coverage',
-    'documentation',
-    'accessibility',
-    'dependency security'
-  ]
-};
-
 export class ReviewerApp {
-  constructor(config = {}) {
-    this.config = { ...DEFAULT_CONFIG, ...config };
+  constructor(configOverrides = {}, configPath = null) {
+    // Load configuration from file first, then apply any overrides
+    const options = configPath ? { config: configPath } : {};
+    const loadedConfig = loadConfiguration(options);
+    this.config = { ...loadedConfig, ...configOverrides };
+    
+    // Validate configuration
+    validateConfiguration(this.config);
+    
     this.aiReviewer = new AIReviewer(this.config);
     this.gitAnalyzer = new GitAnalyzer();
   }
@@ -193,12 +177,14 @@ export class ReviewerApp {
   async shouldAllowCommit(review) {
     if (!review.score) return true;
     
-    // Block commits with severe issues
+    // Block commits with severe issues based on configuration
+    const blockingIssues = this.config.blockingIssues || ['critical', 'high'];
     const hasBlockingIssues = review.issues?.some(issue => 
-      issue.severity === 'critical' || issue.severity === 'high'
+      blockingIssues.includes(issue.severity)
     );
     
-    return !hasBlockingIssues && review.score >= 6;
+    const minimumScore = this.config.minimumScore || 6;
+    return !hasBlockingIssues && review.score >= minimumScore;
   }
 }
 

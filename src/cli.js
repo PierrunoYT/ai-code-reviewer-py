@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import { ReviewerApp } from './index.js';
 import { GitHookInstaller } from './git-hook-installer.js';
+import { loadConfiguration } from './config-loader.js';
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
@@ -205,39 +206,10 @@ index 0000000..abc1234
     }
   });
 
+// This function is now replaced by the shared configuration loader
+// but kept for backward compatibility if needed
 function loadConfig(options) {
-  let config = {};
-
-  // Load from config file
-  const configPath = options.config || '.ai-reviewer-config.json';
-  if (fs.existsSync(configPath)) {
-    config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-  } else if (fs.existsSync('.ai-reviewer-enhanced.json')) {
-    // Fallback to enhanced config
-    config = JSON.parse(fs.readFileSync('.ai-reviewer-enhanced.json', 'utf8'));
-  } else if (fs.existsSync('.ai-reviewer.json')) {
-    // Fallback to legacy config
-    config = JSON.parse(fs.readFileSync('.ai-reviewer.json', 'utf8'));
-  }
-
-  // Override with command line options
-  if (options.apiKey) config.apiKey = options.apiKey;
-  if (options.provider) config.aiProvider = options.provider;
-  if (options.model) config.model = options.model;
-
-  // New feature flags
-  if (options.webSearch) config.enableWebSearch = true;
-  if (options.extendedThinking) config.enableExtendedThinking = true;
-  if (options.citations) config.enableCitations = true;
-  if (options.batch) config.enableBatchProcessing = true;
-  if (options.noBatch) config.enableBatchProcessing = false;
-
-  // Use environment variable for API key
-  if (!config.apiKey) {
-    config.apiKey = process.env.AI_API_KEY;
-  }
-
-  return config;
+  return loadConfiguration(options);
 }
 
 program.parse();
