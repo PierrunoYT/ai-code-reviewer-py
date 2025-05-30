@@ -2,10 +2,6 @@
   "aiProvider": "anthropic",
   "model": "claude-sonnet-4-20250514",
   "maxTokens": 64000,
-  "enableWebSearch": true,
-  "enableExtendedThinking": true,
-  "enableCitations": true,
-  "enableBatchProcessing": true,
   "reviewCriteria": [
     "code quality",
     "security vulnerabilities",
@@ -17,13 +13,20 @@
     "accessibility",
     "dependency security"
   ],
-  "blockingIssues": ["critical", "high"],
+  "blockingIssues": [
+    "critical",
+    "high"
+  ],
   "minimumScore": 6,
-  "retryAttempts": 3,
-  "batchSize": 5,
   "saveToMarkdown": true,
   "markdownOutputDir": "./code-reviews",
   "includeDiffInMarkdown": true,
+  "enableWebSearch": true,
+  "enableExtendedThinking": true,
+  "enableCitations": true,
+  "enableBatchProcessing": true,
+  "retryAttempts": 3,
+  "batchSize": 5,
   "alternativeConfigs": {
     "openai": {
       "aiProvider": "openai",

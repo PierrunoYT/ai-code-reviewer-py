@@ -43,7 +43,7 @@ export function loadConfiguration(options = {}) {
   if (options.extendedThinking) config.enableExtendedThinking = true;
   if (options.citations) config.enableCitations = true;
   if (options.batch) config.enableBatchProcessing = true;
-  if (options.noBatch) config.enableBatchProcessing = false;
+  if (options.batch === false) config.enableBatchProcessing = false;
   if (options.saveMarkdown) config.saveToMarkdown = true;
   if (options.noSaveMarkdown) config.saveToMarkdown = false;
   if (options.markdownDir) config.markdownOutputDir = options.markdownDir;
