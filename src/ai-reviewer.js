@@ -16,7 +16,7 @@ export class AIReviewer {
       case 'openai':
         return 'gpt-4.1'; // Latest GPT-4.1 model
       case 'anthropic':
-        return 'claude-4-sonnet'; // Latest Claude 4 Sonnet model
+        return 'claude-sonnet-4-20250514';
       case 'google':
         return 'gemini-2.5-flash-preview-05-20'; // Latest Gemini 2.5 Flash model
       default:

@@ -10,7 +10,7 @@ async function runDemo() {
   // Configuration showcasing latest features
   const enhancedConfig = {
     aiProvider: 'anthropic',
-    model: 'claude-4-sonnet',
+    model: 'claude-sonnet-4-20250514',
     maxTokens: 4000,
     enableWebSearch: true,
     enableExtendedThinking: true,

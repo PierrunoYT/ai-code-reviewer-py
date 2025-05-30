@@ -75,13 +75,13 @@ npx ai-reviewer review --extended-thinking
 npx ai-reviewer test
 
 # Generate enhanced config file
-npx ai-reviewer config --enhanced
+npm run config
 
-# Generate basic config file
-npx ai-reviewer config
+# Or use CLI directly for custom output
+npx ai-reviewer config --enhanced -o .ai-reviewer-config.json
 
 # Install git hooks
-npx ai-reviewer install-hooks --pre-commit --pre-push
+npm run install-hook
 
 # Run demo to see new features
 npm run demo
@@ -104,10 +104,12 @@ git push --no-verify    # Skip pre-push hook
 
 Create a `.ai-reviewer-config.json` file to customize settings:
 
+> **Note**: Use `npm run config` to generate this file automatically.
+
 ```json
 {
   "aiProvider": "anthropic",
-  "model": "claude-4-sonnet",
+  "model": "claude-sonnet-4-20250514",
   "maxTokens": 4000,
   "enableWebSearch": true,
   "enableExtendedThinking": true,
@@ -137,7 +139,7 @@ Create a `.ai-reviewer-config.json` file to customize settings:
     },
     "claude4opus": {
       "aiProvider": "anthropic",
-      "model": "claude-4-opus",
+      "model": "claude-opus-4-20250514",
       "maxTokens": 8000,
       "enableExtendedThinking": true,
       "enableCitations": true
@@ -186,10 +188,9 @@ export ANTHROPIC_API_KEY="sk-ant-..."  # Your Anthropic API key
 ```
 
 **Latest Models:**
-- `claude-4-sonnet` - Latest Claude 4 Sonnet with enhanced capabilities (Default)
-- `claude-4-opus` - Most powerful model with extended thinking
+- `claude-sonnet-4-20250514` - Latest Claude 4 Sonnet with enhanced capabilities (Default)
+- `claude-opus-4-20250514` - Most powerful model with extended thinking
 - `claude-3-7-sonnet-20250219` - Latest Claude 3.7 Sonnet with hybrid reasoning
-- `claude-3-5-haiku` - Fast and efficient for quick reviews
 
 **Exclusive Features:**
 - Extended thinking for deeper analysis
@@ -204,8 +205,6 @@ export OPENAI_API_KEY="sk-..."  # Your OpenAI API key
 
 **Latest Models:**
 - `gpt-4.1` - Latest GPT-4.1 with improved performance (Default)
-- `gpt-4-turbo` - Fast and capable
-- `o3` and `o4-mini` - Reasoning models for complex analysis
 
 **Features:**
 - Web search integration
@@ -220,7 +219,6 @@ export GOOGLE_API_KEY="your-google-ai-api-key"  # Your Google AI API key
 **Latest Models:**
 - `gemini-2.5-pro-preview-05-06` - State-of-the-art thinking model with maximum accuracy
 - `gemini-2.5-flash-preview-05-20` - Best price-performance with adaptive thinking
-- `gemini-2.0-flash` - Next generation features with enhanced capabilities
 
 **Features:**
 - Adaptive thinking with configurable budgets
@@ -313,7 +311,7 @@ npm run review     # Review commits
 npm run install-hook # Install git hooks
 npm test          # Run tests with sample code
 npm run demo      # Run demo showcasing enhanced features
-npm run config    # Generate enhanced configuration file
+npm run config    # Generate enhanced configuration file (outputs to .ai-reviewer-config.json)
 ```
 
 ## Environment Variables
@@ -341,7 +339,7 @@ npm run config    # Generate enhanced configuration file
      - `OPENAI_API_KEY` for GPT models
      - `GOOGLE_API_KEY` for Gemini models
    - Or specify `--api-key` in CLI command
-   - Or set the legacy `AI_API_KEY` variable
+   - Or use the CLI `--api-key` parameter
 
 2. **Git hooks not working**
    - Ensure you're in a git repository

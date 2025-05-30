@@ -71,12 +71,12 @@ program
 program
   .command('config')
   .description('Generate configuration file')
-  .option('-o, --output <path>', 'Output path for config file', '.ai-reviewer.json')
+  .option('-o, --output <path>', 'Output path for config file', '.ai-reviewer-config.json')
   .option('--enhanced', 'Generate enhanced configuration with latest features')
   .action((options) => {
     const baseConfig = {
       aiProvider: 'anthropic',
-      model: 'claude-4-sonnet',
+      model: 'claude-sonnet-4-20250514',
       maxTokens: 4000,
       reviewCriteria: [
         'code quality',
@@ -113,7 +113,7 @@ program
         },
         claude4opus: {
           aiProvider: 'anthropic',
-          model: 'claude-4-opus',
+          model: 'claude-opus-4-20250514',
           maxTokens: 8000,
           enableExtendedThinking: true,
           enableCitations: true
@@ -148,7 +148,7 @@ program
     const config = options.enhanced ? enhancedConfig : baseConfig;
     fs.writeFileSync(options.output, JSON.stringify(config, null, 2));
     console.log(chalk.green(`✅ Configuration file created: ${options.output}`));
-    console.log(chalk.yellow('💡 Don\'t forget to set your AI_API_KEY environment variable'));
+    console.log(chalk.yellow('💡 Don\'t forget to set your provider-specific API key (e.g., ANTHROPIC_API_KEY)'));
 
     if (options.enhanced) {
       console.log(chalk.blue('🚀 Enhanced configuration includes:'));
@@ -202,7 +202,7 @@ index 0000000..abc1234
       app.displayReview(review, testCommit);
     } catch (error) {
       console.error(chalk.red('Test failed:'), error.message);
-      console.log(chalk.yellow('💡 Make sure to set AI_API_KEY environment variable'));
+      console.log(chalk.yellow('💡 Make sure to set your provider-specific API key (e.g., ANTHROPIC_API_KEY)'));
     }
   });
 

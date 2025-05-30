@@ -66,7 +66,7 @@ export function loadConfiguration(options = {}) {
   // 4. Apply defaults for any missing values
   const defaults = {
     aiProvider: 'anthropic',
-    model: 'claude-4-sonnet',
+    model: 'claude-sonnet-4-20250514',
     maxTokens: 4000,
     enableWebSearch: false,
     enableExtendedThinking: false,

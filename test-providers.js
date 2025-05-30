@@ -61,9 +61,9 @@ const configs = {
     enableCitations: true,
     enableExtendedThinking: true
   },
-  'OpenAI GPT-4o': {
+  'OpenAI GPT-4.1': {
     aiProvider: 'openai',
-    model: 'gpt-4o',
+    model: 'gpt-4.1',
     apiKey: process.env.OPENAI_API_KEY,
     maxTokens: 4000,
     enableWebSearch: false // OpenAI doesn't support the same web search tool
