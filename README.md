@@ -1,137 +1,189 @@
-# AI PR Reviewer
+# AI Code Reviewer (Python)
 
-An intelligent code review system that analyzes your commits before creating pull requests. Uses AI to provide detailed feedback on code quality, security, performance, and best practices.
-
-## Status
-
-> 🚧 **WORK IN PROGRESS**: This repository is currently being converted from JavaScript to Python. Some features may not be fully functional during the transition process. The original JavaScript version is available at [ai-code-reviewer](https://github.com/PierrunoYT/ai-code-reviewer).
+An intelligent code review system for Python projects that analyzes your git commits using AI. It provides detailed feedback on code quality, security, performance, and best practices.
 
 ## Features
 
-- 🤖 **Latest AI Models**: Uses GPT-4.1, Claude 4 Sonnet, Claude 3.7 Sonnet, and Gemini 2.5 Pro/Flash for intelligent code analysis
-- 🔍 **Enhanced Analysis**: Reviews code quality, security, performance, accessibility, and dependency security
-- 🌐 **Web Search Integration**: Real-time lookup of best practices and security vulnerabilities
-- 🧠 **Extended Thinking**: Deep analysis with step-by-step reasoning (Anthropic)
-- 📚 **Citations**: Source attribution for recommendations and best practices
-- ⚡ **Batch Processing**: Efficient review of multiple commits simultaneously
-- 🔄 **Retry Logic**: Robust error handling with exponential backoff
-- 🪝 **Git Integration**: Automatic git hooks for pre-commit and pre-push reviews
-- 📊 **Advanced Scoring**: Quality scores with confidence levels
-- 🎯 **Highly Customizable**: Multiple provider configs and feature toggles
-- 📄 **Markdown Reports**: Automatic saving of detailed review reports in markdown format
-- 🚀 **Easy Setup**: Simple CLI installation and configuration
+- 🤖 **Latest AI Models**: Supports models from Anthropic (Claude Sonnet, Claude 3.7 Sonnet, Claude 3.5 Sonnet), OpenAI (GPT-4.1, GPT-4.1 Mini), and Google (Gemini 2.5 Pro/Flash).
+- 🔍 **Comprehensive Analysis**: Reviews code focusing on quality, security vulnerabilities, performance issues, naming conventions, complexity, test coverage, documentation, accessibility, and dependency security.
+- 🌐 **Web Search Integration**: (Anthropic) Can leverage web search for up-to-date information if the model supports it.
+- 🧠 **Extended Thinking**: (Anthropic) Enables deeper analysis for more thorough reviews if the model supports it.
+- 📚 **Citations**: Can include citations for recommendations and best practices if the model supports it.
+- ⚡ **Batch Processing**: Efficiently reviews multiple commits or files simultaneously.
+- 🔄 **Retry Logic**: Robust error handling with exponential backoff for API calls.
+- 📄 **Markdown Reports**: Automatically saves detailed review reports in markdown format.
+- 📁 **Repository-Wide Analysis**: Generates comprehensive security and architecture assessments of your entire repository.
+- 🌍 **Remote Repository Analysis**: Fetches and analyzes complete remote repositories for security, architecture, and code quality.
+- 📊 **Review Summarization**: Generates a summary of previously saved markdown review files.
+- ⚙️ **Highly Configurable**: Customize AI provider, model, review criteria, output directories, and more via a global configuration file or CLI options.
+- ⌨️ **CLI Interface**: Easy-to-use command-line interface powered by Click.
 
 ## Installation
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/anywaifu/ai-code-reviewer-py.git
+    cd ai-code-reviewer-py
+    ```
+2.  **Install in editable mode**:
 
-2. **Set up your environment variables:**
-   ```bash
-   # Copy the example environment file
-   cp .env.example .env
+    This is recommended for development or if you want to use the CLI from anywhere while easily pulling updates.
+    ```bash
+    pip install -e .
+    ```
+    Ensure your Python scripts directory is in your system's PATH to use the `ai-code-reviewer` command directly.
 
-   # Edit .env and add your API keys
-   # For Anthropic/Claude (recommended):
-   export ANTHROPIC_API_KEY="your-anthropic-api-key"
+## Setup
 
-   # For OpenAI:
-   export OPENAI_API_KEY="your-openai-api-key"
+1.  **Set API Keys**:
+    The application requires API keys for the AI provider you intend to use. You can set these as environment variables:
 
-   # For Google/Gemini:
-   export GOOGLE_API_KEY="your-google-api-key"
-   ```
+    ```bash
+    # For Anthropic/Claude (recommended):
+    export ANTHROPIC_API_KEY="your-anthropic-api-key"
 
-3. **Install git hooks (optional but recommended):**
-   ```bash
-   npm run install-hook
-   ```
+    # For OpenAI:
+    export OPENAI_API_KEY="your-openai-api-key"
+
+    # For Google/Gemini:
+    export GOOGLE_API_KEY="your-google-api-key"
+    ```
+    It's good practice to add these to your shell's configuration file (e.g., `~/.bashrc`, `~/.zshrc`).
+
+2.  **Global Configuration (Recommended)**:
+    You can set global configuration values, including your API key, using the CLI. This creates a configuration file at `~/.ai-code-reviewer-py/config.json`.
+
+    First, set your preferred AI provider:
+    ```bash
+    ai-code-reviewer config set ai_provider anthropic # or openai, google
+    ```
+
+    Then, set your API key:
+    ```bash
+    ai-code-reviewer config set api_key "your-api-key"
+    ```
+
+    You can view your current global configuration anytime:
+    ```bash
+    ai-code-reviewer config show
+    ```
 
 ## Usage
 
-### Command Line Interface
+The primary way to use the tool is through its Command Line Interface (CLI).
 
-**Review recent commits:**
+### General Help
 ```bash
-# Review last commit
-npm run review
+ai-code-reviewer --help
+ai-code-reviewer <command> --help # For help on a specific command
+```
+## Review the last commit
+```bash
+ai-code-reviewer review
+```
+## Review a specific commit range (e.g., last 3 commits)
+```bash
+ai-code-reviewer review HEAD~3..HEAD
+```
+## Review a specific commit
+```bash
+ai-code-reviewer review <commit_hash>
+```
+## Review a range between two branches or commits
+```bash
+ai-code-reviewer review main..my-feature-branch
+```
+**Common Options for `review`:**
+-   `--provider <name>`: Override AI provider (e.g., `openai`).
+-   `--web-search` / `--no-web-search`: Enable/disable Anthropic web search.
+-   `--citations` / `--no-citations`: Enable/disable review citations.
+-   `--batch` / `--no-batch`: Enable/disable batch processing for multiple commits.
+-   `--extended-thinking` / `--no-extended-thinking`: Enable/disable Anthropic extended thinking.
+-   `--save-markdown` / `--no-save-markdown`: Enable/disable saving reviews to Markdown.
+-   `--markdown-dir <path>`: Directory to save Markdown files.
+-   `--include-diff` / `--no-include-diff`: Include diff in Markdown reports.
 
-# Review multiple commits
-npm run review HEAD~3..HEAD
+### Review Repository Files (Local)
 
-# Review specific commit range
-npm run review abc1234..def5678
+Generate a comprehensive analysis of your local repository including security assessment, architecture review, and code quality evaluation.
+```bash
+# Analyze the entire current repository
+ai-code-reviewer review-repo
+#
+# Include only Python files
+ai-code-reviewer review-repo --include "**/*.py"
+#
+# Exclude test files and limit to 10 files
+ai-code-reviewer review-repo --exclude "tests/**" --exclude "**/test_*.py" --max-files 10
 ```
 
-**Using the CLI directly:**
+**Common Options for `review-repo`:**
+-   `--include <pattern>`: Glob pattern for files to include (can be used multiple times). Default: `**/*`.
+-   `--exclude <pattern>`: Glob pattern for files to exclude (can be used multiple times).
+-   `--max-files <number>`: Maximum number of files to review.
+-   Plus most options available for the `review` command (provider, web-search, etc.).
+
+### Review Remote Repository Files
+
+Fetch and generate a comprehensive analysis of a remote Git repository.
 ```bash
-# Review with enhanced features
-npx ai-reviewer review --provider anthropic --web-search --citations
-
-# Review with batch processing
-npx ai-reviewer review HEAD~5..HEAD --batch
-
-# Review with extended thinking (Anthropic only)
-npx ai-reviewer review --extended-thinking
-
-# Save reviews to custom markdown directory
-npx ai-reviewer review --markdown-dir ./my-reviews
-
-# Disable markdown saving
-npx ai-reviewer review --no-save-markdown
-
-# Test the reviewer
-npx ai-reviewer test
-
-# Generate enhanced config file
-npm run config
-
-# Or use CLI directly for custom output
-npx ai-reviewer config --enhanced -o .ai-reviewer-config.json
-
-# Install git hooks
-npm run install-hook
-
-# Run demo to see new features
-npm run demo
+# Analyze a remote repository from HEAD of default branch
+ai-code-reviewer review-remote https://github.com/user/repo.git
+#
+# Review files from a specific branch or tag
+ai-code-reviewer review-remote https://github.com/user/repo.git --ref my-branch
+#
+# Include only Python files from the remote repository
+ai-code-reviewer review-remote https://github.com/user/repo.git --include "**/*.py"
 ```
 
-### Git Hooks
+**Common Options for `review-remote`:**
+-   `repo_url`: The URL of the remote repository.
+-   `--ref <ref>`: Git ref (branch, tag, commit hash) to archive from. Default: `HEAD`.
+-   `--include <pattern>`, `--exclude <pattern>`, `--max-files <number>`: Same as `review-repo`.
+-   Plus most options available for the `review` command.
 
-Once installed, the hooks will automatically:
-
-- **Pre-commit**: Review staged changes before each commit
-- **Pre-push**: Review all commits being pushed to remote
-
-**Bypass hooks when needed:**
+### Manage Global Configuration
 ```bash
-git commit --no-verify  # Skip pre-commit hook
-git push --no-verify    # Skip pre-push hook
+# Set a global configuration value (e.g., default model)
+ai-code-reviewer config set model "claude-3-5-sonnet-20240620"
+#
+# Show the current global configuration path and content
+ai-code-reviewer config show
 ```
 
-### Configuration
+### Summarize Saved Reviews
 
-Create a `.ai-reviewer-config.json` file to customize settings:
+Generate a summary from previously saved Markdown review files.
+```bash
+# Summarize all reviews in the default markdown directory
+ai-code-reviewer summarize
+#
+# Summarize reviews since a specific date
+ai-code-reviewer summarize --since 2024-01-01
+#
+# Summarize reviews with a minimum score of 7
+ai-code-reviewer summarize --min-score 7
+```
 
-> **Note**: Use `npm run config` to generate this file automatically.
+**Common Options for `summarize`:**
+-   `--since <YYYY-MM-DD>`: Only include reviews from this date.
+-   `--min-score <number>`: Minimum review score to include.
 
+## Configuration
+
+The application uses a global configuration file located at `~/.ai-code-reviewer-py/config.json`. You can manage this file using `ai-code-reviewer config set` / `ai-code-reviewer config show` commands, or by editing it directly.
+
+CLI options will override settings from the global configuration file. If a config file path is provided via the main `--config` option, it will take precedence over the global file.
+
+**Example `config.json` structure (based on `AppConfig`):**
 ```json
 {
-  "aiProvider": "anthropic",
-  "model": "claude-sonnet-4-20250514",
-  "maxTokens": 4000,
-  "enableWebSearch": true,
-  "enableExtendedThinking": true,
-  "enableCitations": true,
-  "enableBatchProcessing": true,
-  "retryAttempts": 3,
-  "batchSize": 5,
-  "saveToMarkdown": true,
-  "markdownOutputDir": "./code-reviews",
-  "includeDiffInMarkdown": true,
-  "reviewCriteria": [
+  "ai_provider": "anthropic",
+  "model": "claude-3-5-sonnet-20240620",
+  "max_tokens": 32000,
+  "api_key": "your_api_key_here_if_not_using_env_vars",
+  "review_criteria": [
     "code quality",
     "security vulnerabilities",
     "performance issues",
@@ -142,456 +194,164 @@ Create a `.ai-reviewer-config.json` file to customize settings:
     "accessibility",
     "dependency security"
   ],
-  "blockingIssues": ["critical", "high"],
-  "minimumScore": 6,
-  "alternativeConfigs": {
-    "openai": {
-      "aiProvider": "openai",
-      "model": "gpt-4.1",
-      "maxTokens": 4000,
-      "enableWebSearch": true
-    },
-    "claude4opus": {
-      "aiProvider": "anthropic",
-      "model": "claude-opus-4-20250514",
-      "maxTokens": 8000,
-      "enableExtendedThinking": true,
-      "enableCitations": true
-    },
-    "claude37sonnet": {
-      "aiProvider": "anthropic",
-      "model": "claude-3-7-sonnet-20250219",
-      "maxTokens": 4000,
-      "enableWebSearch": true,
-      "enableCitations": true,
-      "enableExtendedThinking": true
-    },
-    "gemini25pro": {
-      "aiProvider": "google",
-      "model": "gemini-2.5-pro-preview-05-06",
-      "maxTokens": 4000,
-      "enableWebSearch": true,
-      "enableCitations": true,
-      "enableExtendedThinking": true
-    },
-    "gemini25flash": {
-      "aiProvider": "google",
-      "model": "gemini-2.5-flash-preview-05-20",
-      "maxTokens": 4000,
-      "enableWebSearch": true,
-      "enableCitations": true,
-      "enableExtendedThinking": true
-    }
-  }
+  "blocking_issues": ["critical", "high"],
+  "minimum_score": 6,
+  "save_to_markdown": true,
+  "markdown_output_dir": "/home/user/.ai-code-reviewer-py/code-reviews",
+  "include_diff_in_markdown": true,
+  "enable_extended_thinking": false,
+  "enable_citations": false,
+  "enable_batch_processing": true,
+  "enable_anthropic_web_search": false,
+  "retry_attempts": 3,
+  "batch_size": 5
 }
 ```
 
-**Configuration Options:**
-- `enableWebSearch`: Real-time web search for best practices
-- `enableExtendedThinking`: Deep analysis with reasoning steps (Anthropic)
-- `enableCitations`: Include source attribution in recommendations
-- `enableBatchProcessing`: Process multiple commits efficiently
-- `retryAttempts`: Number of retry attempts on API failures
-- `batchSize`: Number of commits to process in each batch
-- `saveToMarkdown`: Save detailed review reports in markdown format
-- `markdownOutputDir`: Directory to save markdown review files
-- `includeDiffInMarkdown`: Include code diffs in markdown reports
+**Key Configuration Options:**
+
+-   `ai_provider`: `anthropic`, `openai`, or `google`.
+-   `model`: Specific model name (e.g., `claude-3-5-sonnet-20240620`, `gpt-4.1-mini`).
+-   `max_tokens`: Maximum tokens for the AI response.
+-   `api_key`: Your API key for the selected provider.
+-   `review_criteria`: List of aspects the AI should focus on.
+-   `save_to_markdown`: Boolean, whether to save reviews as Markdown files.
+-   `markdown_output_dir`: Directory where Markdown reviews are saved. Default: `~/.ai-code-reviewer-py/code-reviews`.
+-   `include_diff_in_markdown`: Boolean, whether to include the code diff in Markdown reports.
+-   `enable_extended_thinking`: (Anthropic) Boolean for deeper analysis.
+-   `enable_citations`: Boolean for including sources in AI responses.
+-   `enable_batch_processing`: Boolean for parallel processing of multiple items.
+-   `enable_anthropic_web_search`: (Anthropic) Boolean for web search capabilities.
+-   `retry_attempts`: Number of retries for failed API calls.
 
 ## Supported AI Providers
 
-### Anthropic Claude (Recommended)
-```bash
-export ANTHROPIC_API_KEY="sk-ant-..."  # Your Anthropic API key
-```
+Ensure you have the respective API key set as an environment variable or in the configuration file.
 
-**Latest Models:**
-- `claude-sonnet-4-20250514` - Latest Claude 4 Sonnet with enhanced capabilities (Default)
-- `claude-opus-4-20250514` - Most powerful model with extended thinking
-- `claude-3-7-sonnet-20250219` - Latest Claude 3.7 Sonnet with hybrid reasoning
+### Anthropic Claude
 
-**Exclusive Features:**
-- Extended thinking for deeper analysis
-- Citations with source attribution
-- Computer use capabilities
-- Batch processing API
+-   Environment Variable: `ANTHROPIC_API_KEY`
+-   Supported Models (examples):
+    -   `claude-sonnet-4-20250514`
+    -   `claude-3-7-sonnet-20250219`
+    -   `claude-3-5-sonnet-20240620` (Often a good balance of capability and cost)
+-   Features: Extended thinking, citations, web search (model-dependent).
 
 ### OpenAI
-```bash
-export OPENAI_API_KEY="sk-..."  # Your OpenAI API key
-```
 
-**Latest Models:**
-- `gpt-4.1` - Latest GPT-4.1 with improved performance (Default)
-
-**Features:**
-- Web search integration
-- Function calling
-- Enhanced moderation
+-   Environment Variable: `OPENAI_API_KEY`
+-   Supported Models (examples):
+    -   `gpt-4.1`
+    -   `gpt-4.1-mini` (Often faster and more cost-effective for smaller tasks)
 
 ### Google AI (Gemini)
-```bash
-export GOOGLE_API_KEY="your-google-ai-api-key"  # Your Google AI API key
+
+-   Environment Variable: `GOOGLE_API_KEY`
+-   Supported Models (examples):
+    -   `gemini-2.5-pro-preview-05-06`
+    -   `gemini-2.5-flash-preview-05-20`
+
+## How Code Analysis Works
+
+### Repository Analysis
+1. **File Collection**: Gathers all tracked files (local) or downloads repository archive (remote)
+2. **Comprehensive Analysis**: Sends entire repository content to AI for holistic review
+3. **Security Assessment**: Identifies potential backdoors, vulnerabilities, and security risks
+4. **Architecture Review**: Evaluates design patterns, structure quality, and modularity
+5. **Repository Summary**: Generates detailed markdown report with findings and recommendations
+
+### Commit Analysis
+1. **Git Data Extraction**:
+    - For commit reviews, `GitAnalyzer` extracts commit details (hash, message, author, date) and the diff.
+-   For repository reviews, it lists tracked files or fetches files from a remote archive.
+
+2.  **AI Prompt Construction**:
+    -   A structured prompt is built including commit details (if applicable), the code diff or file content, and the configured `review_criteria`.
+    -   The prompt instructs the AI to return a JSON formatted response.
+
+3.  **AI Interaction**:
+    -   The prompt is sent to the selected AI model via LiteLLM.
+    -   Features like extended thinking or web search are enabled based on configuration and provider support.
+
+4.  **Response Parsing**:
+    -   The AI's JSON response is parsed into a structured `AIReviewResponse` format.
+    -   This includes a score, summary, list of issues (severity, description, suggestion, category), and other notes.
+
+5.  **Output and Reporting**:
+    -   The review is displayed on the console.
+    -   If `save_to_markdown` is enabled, a detailed Markdown report is saved.
+
+## Markdown Review Reports
+
+When enabled, reviews are saved as Markdown files.
+
+-   **Directory**: Defined by `markdown_output_dir` in the configuration (default: `~/.ai-code-reviewer-py/code-reviews`).
+-   **Filename Format**:
+    -   For commits: `YYYYMMDD-HHMMSS-<short_hash>-<sanitized_commit_message_summary>.md`
+    -   For files: `file-YYYYMMDD-HHMMSS-<sanitized_file_path>.md`
+
+**Report Structure Example (Commit Review):**
+```markdown
+# Code Review for Commit <short_hash>
+
+**Message:** Original commit message
+**Author:** Author Name <author@example.com>
+**Date:** YYYY-MM-DDTHH:MM:SS
+
+## AI Review Summary
+- **Score:** 8/10
+- **Confidence:** 9/10
+- **Summary:** A brief summary from the AI.
+
+## Issues Found
+- **[CRITICAL]** Description of a critical issue.
+  - Suggestion: How to fix it.
+  - Citation: (If provided)
+
+## Code Diff
+--- a/file.py
++++ b/file.py
+@@ -1,3 +1,4 @@
+def old_function():
+    pass
++def new_function():
++    # This is a new line
 ```
-
-**Latest Models:**
-- `gemini-2.5-pro-preview-05-06` - State-of-the-art thinking model with maximum accuracy
-- `gemini-2.5-flash-preview-05-20` - Best price-performance with adaptive thinking
-
-**Features:**
-- Adaptive thinking with configurable budgets
-- Multimodal understanding (text, images, video, audio)
-- Long context windows (up to 1M tokens)
-- Native tool use and function calling
-
-## 📊 How Code Analysis Works
-
-The AI reviewer performs comprehensive code analysis through a sophisticated multi-stage process:
-
-### 1. **Git Data Extraction**
-```javascript
-// Extracts detailed commit information
-- Commit hash, author, date, message, and body
-- Full unified diff with 3 lines of context around changes
-- Complete list of changed files
-- File modification types (added, modified, deleted)
-```
-
-### 2. **Diff Analysis Structure**
-The system uses `git show --unified=3` to capture:
-- **Full diff content**: Including additions (+), deletions (-), and context lines
-- **File paths**: What files were modified, added, or deleted
-- **Line numbers**: Exact locations of changes
-- **Change context**: Surrounding code for better understanding
-
-### 3. **AI Prompt Construction**
-Each commit receives a structured analysis prompt containing:
-
-```
-You are an expert code reviewer. Review this git commit:
-
-Commit Message: [message]
-Author: [author]  
-Date: [date]
-
-Code Changes:
-```diff
-[complete unified diff]
-```
-
-Analyze focusing on 8 key dimensions:
-1. Code quality and maintainability
-2. Security vulnerabilities (OWASP guidelines)
-3. Performance implications  
-4. Best practices adherence (current industry standards)
-5. Testing considerations
-6. Documentation needs
-7. Accessibility considerations
-8. Dependency security
-```
-
-### 4. **Enhanced Analysis Features**
-
-**🌐 Web Search Integration** (optional):
-- Real-time lookup of security vulnerabilities in dependencies
-- Current best practices verification from authoritative sources
-- Framework-specific recommendations and updates
-- OWASP, NIST, and other security guideline references
-
-**🧠 Extended Thinking** (Claude models):
-- Step-by-step reasoning process visible to users
-- Deeper analysis with logical thought progression
-- Budget-controlled thinking tokens for thorough review
-
-**📚 Citations & Sources**:
-- Source attribution for all recommendations
-- Links to security guidelines (OWASP, NIST, CWE)
-- Best practice documentation references
-- Framework and library documentation
-
-### 5. **Multi-Dimensional Analysis Framework**
-
-The AI analyzes **8 critical dimensions** simultaneously:
-
-| Dimension | Analysis Focus | Examples |
-|-----------|---------------|----------|
-| **🔒 Security** | Vulnerabilities & threats | SQL injection, XSS, secrets in code, input validation |
-| **⚡ Performance** | Efficiency & optimization | Inefficient algorithms, memory leaks, database queries |
-| **🏗️ Quality** | Code structure & maintainability | Complexity, readability, design patterns, SOLID principles |
-| **🎨 Style** | Conventions & consistency | Naming conventions, formatting, code organization |
-| **🧪 Testing** | Test coverage & quality | Missing tests, test effectiveness, mocking strategies |
-| **📚 Documentation** | Code clarity & docs | Comments, README updates, API documentation |
-| **♿ Accessibility** | Inclusive design | ARIA labels, keyboard navigation, screen reader support |
-| **📦 Dependencies** | Package security & updates | Vulnerable packages, outdated versions, license issues |
-
-### 6. **Context-Aware Intelligence**
-
-The AI understands and adapts to:
-
-**Language-Specific Patterns:**
-- JavaScript/TypeScript: Async/await, promises, ES6+ features
-- Python: Pythonic idioms, PEP standards, virtual environments
-- Java: Spring patterns, Maven/Gradle, enterprise patterns
-- And 50+ other programming languages
-
-**Framework Recognition:**
-- **Web**: React, Vue, Angular, Express, Django, Flask
-- **Mobile**: React Native, Flutter, Swift, Kotlin
-- **Cloud**: AWS, Azure, GCP services and patterns
-- **Databases**: SQL patterns, NoSQL usage, ORM practices
-
-**Security Context Analysis:**
-- Web application security (OWASP Top 10)
-- API security best practices
-- Database security patterns
-- Authentication and authorization flows
-
-### 7. **Structured Analysis Output**
-
-Returns comprehensive JSON structure:
-```json
-{
-  "score": 7,                    // 1-10 quality rating
-  "confidence": 9,               // AI confidence level
-  "summary": "Added authentication with security concerns",
-  "issues": [
-    {
-      "severity": "critical",    // critical|high|medium|low
-      "description": "SQL injection vulnerability",
-      "suggestion": "Use parameterized queries",
-      "category": "security",    // security|performance|quality|style|testing|documentation
-      "citation": "OWASP SQL Injection Prevention",
-      "autoFixable": true
-    }
-  ],
-  "suggestions": ["Add input validation", "Implement rate limiting"],
-  "security": ["Use HTTPS", "Hash passwords with bcrypt"],
-  "performance": ["Add database indexing", "Implement caching"],
-  "dependencies": ["Update vulnerable packages"],
-  "accessibility": ["Add ARIA labels", "Improve keyboard navigation"],
-  "sources": ["OWASP Top 10", "Node.js Security Checklist"]
-}
-```
-
-### 8. **Real-World Analysis Examples**
-
-**Example 1: Authentication Code**
-```javascript
-// Input: User login function with SQL concatenation
-function login(username, password) {
-  const query = "SELECT * FROM users WHERE username = '" + username + "'";
-  return database.query(query);
-}
-
-// AI Analysis Output:
-// 🚨 CRITICAL: SQL injection vulnerability
-// 💡 Suggestion: Use parameterized queries
-// 📚 Source: OWASP SQL Injection Prevention Guide
-// 🔧 Auto-fixable: Yes
-```
-
-**Example 2: React Component**
-```jsx
-// Input: Component without accessibility
-<button onClick={handleClick}>Submit</button>
-
-// AI Analysis Output:
-// ⚠️ MEDIUM: Missing accessibility attributes
-// 💡 Suggestion: Add aria-label and keyboard support
-// 📚 Source: WAI-ARIA Authoring Practices
-// ♿ Accessibility: Consider screen reader users
-```
-
-### 9. **Intelligent Scoring System**
-
-**Quality Score (1-10):**
-- **8-10**: Excellent code with minor suggestions
-- **6-7**: Good code with some improvements needed
-- **4-5**: Acceptable but requires attention
-- **1-3**: Significant issues requiring immediate fixes
-
-**Confidence Level (1-10):**
-- **8-10**: High confidence in analysis accuracy
-- **6-7**: Good confidence with some uncertainty
-- **4-5**: Moderate confidence, manual review suggested
-- **1-3**: Low confidence, human expert review required
-
-The analysis is **comprehensive, context-aware, and actionable** - providing expert-level code review insights with the latest security knowledge and best practices, far beyond simple syntax checking.
-
-## Enhanced Review Output
-
-The AI reviewer provides comprehensive analysis:
-
-- **Quality Score**: 1-10 rating of code quality
-- **Confidence Level**: AI's confidence in the review (1-10)
-- **Summary**: Brief overview of the changes
-- **Categorized Issues**: Problems with severity, category, and auto-fix indicators
-- **Suggestions**: Improvement recommendations
-- **Security Notes**: Security-related observations
-- **Performance Notes**: Performance implications
-- **Dependency Notes**: Package and library security
-- **Accessibility Notes**: Accessibility considerations
-- **Citations**: Source attribution for recommendations
-
-## 📄 Markdown Review Reports
-
-All reviews are automatically saved as detailed markdown files in the `./code-reviews` directory (configurable). Each report includes:
-
-- **Complete review details** with all scores, issues, and suggestions
-- **Formatted markdown** with proper headings, emojis, and structure
-- **Code diffs** (optional, enabled by default)
-- **Timestamped filenames** for easy organization
-- **Provider and model information** in footer
-
-**Example filename format:**
-```
-2025-05-30T14-30-15-abc12345-fix-authentication-bug.md
-```
-
-**Report structure:**
-- 📊 Review Scores (Quality & Confidence)
-- 📋 Summary
-- ⚠️ Issues Found (categorized by severity)
-- 💡 General Suggestions
-- 🔒 Security Notes
-- ⚡ Performance Notes
-- 📦 Dependency Notes
-- ♿ Accessibility Notes
-- 📚 Sources Consulted
-- 📝 Code Changes (diff)
-
-Example enhanced output:
-```
-📊 Code Quality Score: 7/10
-🎯 Confidence Level: 9/10
-
-📋 Summary: Added user authentication endpoint with password validation
-
-⚠️  Issues Found:
-  1. 🚨 CRITICAL: SQL injection vulnerability in getUserData function
-     💡 Suggestion: Use parameterized queries instead of string concatenation
-     🏷️  Category: security
-     📚 Source: OWASP SQL Injection Prevention Cheat Sheet
-     🔧 Auto-fixable: Yes
-
-  2. ⚠️ HIGH: Hardcoded JWT secret key
-     💡 Suggestion: Use environment variables for secrets
-     🏷️  Category: security
-     📚 Source: NIST Cybersecurity Framework
-
-💡 Suggestions:
-  1. Add input validation for user parameters
-  2. Implement rate limiting for authentication attempts
-  3. Add comprehensive unit tests
-
-🔒 Security Notes:
-  1. Missing authentication middleware on sensitive endpoints
-  2. Password complexity requirements not enforced
-
-⚡ Performance Notes:
-  1. Consider implementing connection pooling for database queries
-
-📦 Dependency Notes:
-  1. bcrypt version should be updated to latest for security patches
-
-♿ Accessibility Notes:
-  1. Authentication forms should include proper ARIA labels
-
-📚 Sources Consulted:
-  1. OWASP Authentication Cheat Sheet
-  2. Node.js Security Best Practices
-  3. JWT Security Best Practices
-```
-
 ## Development
 
-**Project Structure:**
-```
-src/
-├── index.js              # Main application entry point
-├── ai-reviewer.js        # AI integration and API calls
-├── git-analyzer.js       # Git operations and diff analysis
-├── cli.js               # Command line interface
-├── config-loader.js      # Configuration management
-├── demo.js              # Demo script showcasing features
-└── git-hook-installer.js # Git hooks management
+### Running Tests
 
-Configuration Files:
-├── .ai-reviewer-config.json  # Main configuration file
-├── .env.example             # Environment variables template
-├── package.json             # Node.js dependencies and scripts
-└── .gitignore              # Git ignore patterns
-```
-
-**Scripts:**
+Tests are written using `pytest`.
 ```bash
-npm start          # Run the reviewer
-npm run review     # Review commits
-npm run install-hook # Install git hooks
-npm test          # Run tests with sample code
-npm run demo      # Run demo showcasing enhanced features
-npm run config    # Generate enhanced configuration file (outputs to .ai-reviewer-config.json)
+pytest
 ```
 
-## Environment Variables
+## GitHub Actions for Tests
 
-### Required API Keys (choose one or more providers)
-- `ANTHROPIC_API_KEY` - Your Anthropic/Claude API key
-- `OPENAI_API_KEY` - Your OpenAI API key
-- `GOOGLE_API_KEY` - Your Google/Gemini API key
-- `AI_API_KEY` - Legacy fallback API key (for backward compatibility)
+To automatically run tests on push and pull requests, you can add a GitHub Actions workflow. Create a file named `.github/workflows/python-tests.yml`:
+```yaml
+name: Python Tests
 
-### Optional Configuration
-- `AI_PROVIDER` - AI provider ('anthropic', 'openai', or 'google') - defaults to 'anthropic'
-- `AI_MODEL` - AI model to use - defaults to provider-specific latest model
-- `DEBUG` - Enable debug logging (true/false) - defaults to false
-- `AI_REVIEWER_CONFIG_PATH` - Custom config file path - defaults to '.ai-reviewer-config.json'
-- `JWT_SECRET` - JWT secret for demo authentication scenarios
+on: [push, pull_request]
 
-## Troubleshooting
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13"] # required for blob patterns
 
-**Common Issues:**
-
-1. **"AI API key not found"**
-   - Set the appropriate API key environment variable:
-     - `ANTHROPIC_API_KEY` for Claude models
-     - `OPENAI_API_KEY` for GPT models
-     - `GOOGLE_API_KEY` for Gemini models
-   - Or specify `--api-key` in CLI command
-   - Or use the CLI `--api-key` parameter
-
-2. **Git hooks not working**
-   - Ensure you're in a git repository
-   - Run `npm run install-hook` to reinstall hooks
-   - Check hook permissions on Unix systems
-
-3. **Reviews taking too long**
-   - Reduce `maxTokens` in configuration
-   - Use a faster AI model
-   - Review smaller commit ranges
-
-4. **False positives in reviews**
-   - Customize `reviewCriteria` in configuration
-   - Adjust `minimumScore` threshold
-   - Use `--no-verify` to bypass when needed
-
-## Security Considerations
-
-- **API Keys**: Never commit your `.env` file or expose API keys in code
-- **Environment Variables**: Use `.env.example` as a template and create your own `.env` file
-- **Git Hooks**: The pre-commit and pre-push hooks help catch security issues before they're committed
-- **Configuration**: Review the `.ai-reviewer-config.json` file to ensure it meets your security requirements
-- **Backup**: Git hooks create backup files (`.backup` extension) when installing over existing hooks
-
-## License
-
-MIT License - see LICENSE file for details.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-The AI reviewer will automatically review your PR! 🎉
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .[dev] # Installs main + dev dependencies
+    - name: Run tests
+      run: |
+        pytest
+```
