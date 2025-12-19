@@ -130,3 +130,43 @@ exit 0
     }
   }
 }
+
+// CLI entry point - run when executed directly
+const isMainModule = (() => {
+  try {
+    const currentFilePath = fileURLToPath(import.meta.url);
+    const argvPath = path.resolve(process.argv[1]);
+    return currentFilePath === argvPath;
+  } catch {
+    return false;
+  }
+})();
+
+if (isMainModule) {
+  const installer = new GitHookInstaller();
+  const args = process.argv.slice(2);
+  
+  if (args.includes('--uninstall')) {
+    installer.uninstallHooks()
+      .then(() => console.log('✅ Git hooks uninstalled'))
+      .catch(error => {
+        console.error('❌ Error:', error.message);
+        process.exit(1);
+      });
+  } else if (args.includes('--pre-push')) {
+    installer.installPrePushHook()
+      .then(() => console.log('✅ Pre-push hook installed'))
+      .catch(error => {
+        console.error('❌ Error:', error.message);
+        process.exit(1);
+      });
+  } else {
+    // Default: install pre-commit hook
+    installer.installPreCommitHook()
+      .then(() => console.log('✅ Pre-commit hook installed'))
+      .catch(error => {
+        console.error('❌ Error:', error.message);
+        process.exit(1);
+      });
+  }
+}

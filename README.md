@@ -2,10 +2,6 @@
 
 An intelligent code review system that analyzes your commits before creating pull requests. Uses AI to provide detailed feedback on code quality, security, performance, and best practices.
 
-## Status
-
-> 🚧 **WORK IN PROGRESS**: This repository is currently being converted from JavaScript to Python. Some features may not be fully functional during the transition process. The original JavaScript version is available at [ai-code-reviewer](https://github.com/PierrunoYT/ai-code-reviewer).
-
 ## Features
 
 - 🤖 **Latest AI Models**: Uses GPT-4.1, Claude 4 Sonnet, Claude 3.7 Sonnet, and Gemini 2.5 Pro/Flash for intelligent code analysis
@@ -121,7 +117,7 @@ Create a `.ai-reviewer-config.json` file to customize settings:
 {
   "aiProvider": "anthropic",
   "model": "claude-sonnet-4-20250514",
-  "maxTokens": 4000,
+  "maxTokens": 64000,
   "enableWebSearch": true,
   "enableExtendedThinking": true,
   "enableCitations": true,
@@ -148,20 +144,20 @@ Create a `.ai-reviewer-config.json` file to customize settings:
     "openai": {
       "aiProvider": "openai",
       "model": "gpt-4.1",
-      "maxTokens": 4000,
+      "maxTokens": 32768,
       "enableWebSearch": true
     },
     "claude4opus": {
       "aiProvider": "anthropic",
       "model": "claude-opus-4-20250514",
-      "maxTokens": 8000,
+      "maxTokens": 32000,
       "enableExtendedThinking": true,
       "enableCitations": true
     },
     "claude37sonnet": {
       "aiProvider": "anthropic",
       "model": "claude-3-7-sonnet-20250219",
-      "maxTokens": 4000,
+      "maxTokens": 128000,
       "enableWebSearch": true,
       "enableCitations": true,
       "enableExtendedThinking": true
@@ -169,7 +165,7 @@ Create a `.ai-reviewer-config.json` file to customize settings:
     "gemini25pro": {
       "aiProvider": "google",
       "model": "gemini-2.5-pro-preview-05-06",
-      "maxTokens": 4000,
+      "maxTokens": 64000,
       "enableWebSearch": true,
       "enableCitations": true,
       "enableExtendedThinking": true
@@ -177,7 +173,7 @@ Create a `.ai-reviewer-config.json` file to customize settings:
     "gemini25flash": {
       "aiProvider": "google",
       "model": "gemini-2.5-flash-preview-05-20",
-      "maxTokens": 4000,
+      "maxTokens": 64000,
       "enableWebSearch": true,
       "enableCitations": true,
       "enableExtendedThinking": true
@@ -541,9 +537,6 @@ npm run config    # Generate enhanced configuration file (outputs to .ai-reviewe
 - `AI_API_KEY` - Legacy fallback API key (for backward compatibility)
 
 ### Optional Configuration
-- `AI_PROVIDER` - AI provider ('anthropic', 'openai', or 'google') - defaults to 'anthropic'
-- `AI_MODEL` - AI model to use - defaults to provider-specific latest model
-- `DEBUG` - Enable debug logging (true/false) - defaults to false
 - `AI_REVIEWER_CONFIG_PATH` - Custom config file path - defaults to '.ai-reviewer-config.json'
 - `JWT_SECRET` - JWT secret for demo authentication scenarios
 

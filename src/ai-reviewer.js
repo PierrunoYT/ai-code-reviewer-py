@@ -25,6 +25,16 @@ export class AIReviewer {
   }
 
   async reviewCode(diff, commit) {
+    // Input validation
+    if (!diff || typeof diff !== 'string') {
+      throw new Error('Invalid diff: must be a non-empty string');
+    }
+    if (!commit || typeof commit !== 'object') {
+      throw new Error('Invalid commit: must be an object with hash, message, author, and date');
+    }
+    if (!commit.hash || !commit.message) {
+      throw new Error('Invalid commit: missing required fields (hash, message)');
+    }
     if (!this.apiKey) {
       throw new Error('AI API key not found. Set AI_API_KEY environment variable.');
     }
@@ -221,7 +231,12 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
       return textBlocks.join(' ');
     }
 
-    return response.data.content[0].text;
+    // Handle non-array content (fallback)
+    if (response.data.content && typeof response.data.content === 'string') {
+      return response.data.content;
+    }
+
+    throw new Error('Unexpected response format from Anthropic API');
   }
 
   async callGoogle(prompt) {
@@ -330,8 +345,12 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
       return this.batchReviewAnthropic(commits, diffs);
     }
 
-    // Google AI and OpenAI use sequential processing for now
-    // Fallback to sequential processing
+    // Google AI and OpenAI use sequential processing
+    return this.reviewCommitsSequentially(commits, diffs);
+  }
+
+  // Sequential processing fallback (used when batch fails or for non-Anthropic providers)
+  async reviewCommitsSequentially(commits, diffs) {
     const reviews = [];
     for (let i = 0; i < commits.length; i++) {
       const review = await this.reviewCode(diffs[i], commits[i]);
@@ -377,7 +396,8 @@ Be constructive, specific, and provide actionable feedback. Focus on the most im
       return this.pollBatchResults(response.data.id);
     } catch (error) {
       console.warn('Batch processing failed, falling back to sequential:', error.message);
-      return this.reviewMultipleCommits(commits, diffs);
+      // Use sequential processing directly to avoid infinite recursion
+      return this.reviewCommitsSequentially(commits, diffs);
     }
   }
 

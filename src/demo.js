@@ -68,7 +68,7 @@ index 0000000..abc1234
 +const jwt = require('jsonwebtoken');
 +
 +function authenticateUser(username, password) {
-+  // TODO: Add input validation
++  // VULNERABLE: Missing input validation (intentional for demo)
 +  const user = getUserFromDatabase(username);
 +  
 +  if (user && bcrypt.compareSync(password, user.hashedPassword)) {

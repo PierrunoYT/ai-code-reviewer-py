@@ -35,7 +35,7 @@ program
   .option('--no-include-diff', 'Exclude code diff from markdown files')
   .action(async (range, options) => {
     try {
-      const config = loadConfig(options);
+      const config = loadConfiguration(options);
       const app = new ReviewerApp(config);
       await app.reviewCommits(range);
     } catch (error) {
@@ -185,7 +185,7 @@ index 0000000..abc1234
 +++ b/test.js
 @@ -0,0 +1,10 @@
 +function getUserData(id) {
-+  // TODO: Add input validation
++  // VULNERABLE: Missing input validation (intentional for demo)
 +  const query = "SELECT * FROM users WHERE id = " + id;
 +  return database.query(query);
 +}
@@ -204,7 +204,7 @@ index 0000000..abc1234
       date: new Date().toISOString()
     };
 
-    const config = loadConfig({});
+    const config = loadConfiguration({});
     const app = new ReviewerApp(config);
     
     try {
@@ -216,11 +216,5 @@ index 0000000..abc1234
       console.log(chalk.yellow('💡 Make sure to set your provider-specific API key (e.g., ANTHROPIC_API_KEY)'));
     }
   });
-
-// This function is now replaced by the shared configuration loader
-// but kept for backward compatibility if needed
-function loadConfig(options) {
-  return loadConfiguration(options);
-}
 
 program.parse();

@@ -7,6 +7,7 @@ import { loadConfiguration, validateConfiguration } from './config-loader.js';
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Load environment variables
 dotenv.config();
@@ -359,8 +360,18 @@ export class ReviewerApp {
   }
 }
 
-// CLI usage
-if (import.meta.url === `file://${process.argv[1]}`) {
+// CLI usage - handle Windows path compatibility
+const isMainModule = (() => {
+  try {
+    const currentFilePath = fileURLToPath(import.meta.url);
+    const argvPath = path.resolve(process.argv[1]);
+    return currentFilePath === argvPath;
+  } catch {
+    return false;
+  }
+})();
+
+if (isMainModule) {
   const app = new ReviewerApp();
   const commitRange = process.argv[2] || 'HEAD~1..HEAD';
   

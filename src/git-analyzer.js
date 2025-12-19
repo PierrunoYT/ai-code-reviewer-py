@@ -6,6 +6,9 @@ export class GitAnalyzer {
   }
 
   async getCommits(range = 'HEAD~1..HEAD') {
+    if (!range || typeof range !== 'string' || !range.includes('..')) {
+      throw new Error('Invalid commit range: must be a string in format "from..to"');
+    }
     try {
       const log = await this.git.log({
         from: range.split('..')[0],
@@ -32,13 +35,10 @@ export class GitAnalyzer {
   }
 
   async getCommitDiff(commitHash) {
+    if (!commitHash || typeof commitHash !== 'string') {
+      throw new Error('Invalid commit hash: must be a non-empty string');
+    }
     try {
-      const diff = await this.git.show([
-        commitHash,
-        '--pretty=format:',
-        '--name-status'
-      ]);
-
       const fullDiff = await this.git.show([
         commitHash,
         '--pretty=format:',
@@ -52,6 +52,9 @@ export class GitAnalyzer {
   }
 
   async getChangedFiles(commitHash) {
+    if (!commitHash || typeof commitHash !== 'string') {
+      throw new Error('Invalid commit hash: must be a non-empty string');
+    }
     try {
       const result = await this.git.show([
         '--name-only',
@@ -93,6 +96,9 @@ export class GitAnalyzer {
   }
 
   async getFileContent(filePath, commitHash = 'HEAD') {
+    if (!filePath || typeof filePath !== 'string') {
+      throw new Error('Invalid file path: must be a non-empty string');
+    }
     try {
       return await this.git.show([`${commitHash}:${filePath}`]);
     } catch (error) {
